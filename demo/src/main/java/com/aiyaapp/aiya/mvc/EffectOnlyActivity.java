@@ -3,12 +3,14 @@ package com.aiyaapp.aiya.mvc;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import com.aiyaapp.aiya.EffectSelectActivity;
 import com.aiyaapp.aiya.R;
 import com.aiyaapp.aiya.util.PermissionUtils;
 import com.aiyaapp.camera.sdk.AiyaEffects;
 import com.aiyaapp.camera.sdk.widget.AnimEffectTextureView;
+import com.aiyaapp.camera.sdk.widget.GLEnvironment;
 
 /**
  * Created by aiya on 2017/6/21.
@@ -32,6 +34,12 @@ public class EffectOnlyActivity extends EffectSelectActivity {
             initData();
             modelInit();
             mEffectView=(AnimEffectTextureView) findViewById(R.id.mEffectView);
+            mEffectView.setOnErrorListener(new GLEnvironment.ErrorListener() {
+                @Override
+                public void onError(int errorCode, String errorMsg) {
+                    Log.e("wuwang","mEffectViewError:"+errorMsg);
+                }
+            });
         }
     };
 

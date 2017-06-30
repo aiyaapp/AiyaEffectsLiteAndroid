@@ -73,6 +73,10 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         mEnv.setRenderMode(GLEnvironment.RENDERMODE_CONTINUOUSLY);
     }
 
+    public void setEffect(String effect){
+        AiyaEffects.getInstance().setEffect(effect);
+    }
+
     public void setAnimEndListener(AnimEndListener listener){
         this.mAnimEndListener=listener;
     }
