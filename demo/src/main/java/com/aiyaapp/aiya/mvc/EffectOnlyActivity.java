@@ -48,6 +48,11 @@ public class EffectOnlyActivity extends EffectSelectActivity {
     }
 
     @Override
+    protected void setEffect(String effect) {
+        mEffectView.setEffect(effect);
+    }
+
+    @Override
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId()){

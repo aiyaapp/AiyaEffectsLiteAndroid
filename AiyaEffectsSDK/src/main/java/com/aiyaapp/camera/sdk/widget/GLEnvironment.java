@@ -30,6 +30,8 @@ public class GLEnvironment implements SurfaceHolder.Callback2 {
     private final static boolean LOG_RENDERER_DRAW_FRAME = false;
     private final static boolean LOG_EGL = false;
 
+    private boolean isResumeNow=false;
+
     public static final int ERROR_EGL_START=0x0001;
 
     public final static int RENDERMODE_WHEN_DIRTY = 0;
@@ -203,11 +205,17 @@ public class GLEnvironment implements SurfaceHolder.Callback2 {
 
 
     public void onPause() {
-        mGLThread.onPause();
+        if(isResumeNow){
+            isResumeNow=false;
+            mGLThread.onPause();
+        }
     }
 
     public void onResume() {
-        mGLThread.onResume();
+        if(!isResumeNow){
+            isResumeNow=true;
+            mGLThread.onResume();
+        }
     }
 
     public void queueEvent(Runnable r) {
@@ -215,7 +223,7 @@ public class GLEnvironment implements SurfaceHolder.Callback2 {
     }
 
 
-    protected void onAttachedToWindow() {
+    public void onAttachedToWindow() {
         if (LOG_ATTACH_DETACH) {
             Log.d(TAG, "onAttachedToWindow reattach =" + mDetached);
         }
@@ -233,7 +241,7 @@ public class GLEnvironment implements SurfaceHolder.Callback2 {
         mDetached = false;
     }
 
-    protected void onDetachedFromWindow() {
+    public void onDetachedFromWindow() {
         if (LOG_ATTACH_DETACH) {
             Log.d(TAG, "onDetachedFromWindow");
         }

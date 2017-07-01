@@ -45,6 +45,7 @@
         android:layout_centerVertical="true"
         android:text="美颜"
         android:onClick="onClick"
+        android:visibility="gone"
         android:id="@+id/mRight" />
   </RelativeLayout>
   <android.support.v7.widget.RecyclerView

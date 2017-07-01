@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.TextureView;
 import com.aiyaapp.camera.sdk.AiyaEffects;
 import com.aiyaapp.camera.sdk.base.ActionObserver;
@@ -69,12 +70,23 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                 egl.eglDestroySurface(display,surface);
             }
         });
+        mEnv.setPreserveEGLContextOnPause(true);
         mEnv.setRenderer(this);
-        mEnv.setRenderMode(GLEnvironment.RENDERMODE_CONTINUOUSLY);
+        mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
     }
 
     public void setEffect(String effect){
-        AiyaEffects.getInstance().setEffect(effect);
+        if(effect==null){
+            mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
+            AiyaEffects.getInstance().setEffect(null);
+        }else{
+            mEnv.setRenderMode(GLEnvironment.RENDERMODE_CONTINUOUSLY);
+            AiyaEffects.getInstance().setEffect(effect);
+        }
+    }
+
+    public boolean isAnimEffectPlaying(){
+        return AiyaEffects.getInstance().isEffectNull();
     }
 
     public void setAnimEndListener(AnimEndListener listener){
@@ -100,6 +112,9 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         this.mTexture=surface;
         mEnv.surfaceCreated(null);
         mEnv.surfaceChanged(null,0,width,height);
+        if (!isAnimEffectPlaying()){
+            mEnv.onPause();
+        }
     }
 
     @Override
@@ -174,6 +189,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                 if(mAnimEndListener!=null){
                     mAnimEndListener.onAnimEnd(event.strTag);
                 }
+                mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
                 break;
         }
     }

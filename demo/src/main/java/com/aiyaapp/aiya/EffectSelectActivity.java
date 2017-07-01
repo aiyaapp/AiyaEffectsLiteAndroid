@@ -84,7 +84,7 @@ public class EffectSelectActivity extends AppCompatActivity {
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     startActivityForResult(Intent.createChooser(intent, "请选择一个json文件"),101);
                 }else{
-                    AiyaEffects.getInstance().setEffect("assets/modelsticker/"+m.path);
+                    setEffect("assets/modelsticker/"+m.path);
                     mStickerAdapter.checkPos=pos;
                     v.setSelected(true);
                 }
@@ -93,6 +93,10 @@ public class EffectSelectActivity extends AppCompatActivity {
         });
         mMenuView.setAdapter(mStickerAdapter);
         initEffectMenu("modelsticker/stickers.json");
+    }
+
+    protected void setEffect(String effect){
+
     }
 
     //刷新美颜按钮

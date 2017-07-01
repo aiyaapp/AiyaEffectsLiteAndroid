@@ -202,6 +202,10 @@ public class AiyaEffects implements ISdkManager {
         this.nextEffect=effectPath;
     }
 
+    public boolean isEffectNull(){
+        return currentEffect==null&&nextEffect==null;
+    }
+
     private void refreshParams(){
         if(input==null){
             input=new Parameter();

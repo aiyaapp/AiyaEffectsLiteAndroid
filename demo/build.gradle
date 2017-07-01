@@ -48,10 +48,10 @@ dependencies {
 build{
     doLast {
         copy{
-            from "./build/outputs/apk/demo-release.apk"
-            into "../output/"
+            from "./build/outputs/apk/demo-debug.apk"
+            into "./build/outputs/apk/"
             rename {
-                "哎吖SDKDemo_${rootProject.ext.vName}_${date()}.apk"
+                "AiyaEffectsLiteDemo_${rootProject.ext.vName}_${date()}.apk"
             }
             println("=====================copy success.=========================")
         }
