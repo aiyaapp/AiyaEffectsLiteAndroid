@@ -190,6 +190,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                     mAnimEndListener.onAnimEnd(event.strTag);
                 }
                 mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
+                mEnv.requestRender();
                 break;
         }
     }
