@@ -40,6 +40,7 @@ public class EffectOnlyActivity extends EffectSelectActivity {
                     Log.e("wuwang","mEffectViewError:"+errorMsg);
                 }
             });
+            mEffectView.setAnimListener(new FrameRateCounter());
         }
     };
 

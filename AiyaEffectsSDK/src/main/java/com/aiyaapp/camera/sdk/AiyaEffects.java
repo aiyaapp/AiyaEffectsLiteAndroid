@@ -298,6 +298,11 @@ public class AiyaEffects implements ISdkManager {
                     mSemaphore.release();
                 }
             });
+            try {
+                mSemaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -305,11 +310,6 @@ public class AiyaEffects implements ISdkManager {
     @Override
     public void process(int textureId, int trackIndex) {
         if(isResourceReady){
-            try {
-                mSemaphore.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             if(!isSetParam){
                 setParameters(input,output);
             }
@@ -321,12 +321,12 @@ public class AiyaEffects implements ISdkManager {
             if(mProcessCallback!=null){
                 mProcessCallback.onFinished();
             }
-            if(mMode==MODE_GIFT&&ret==STATE_EFFECT_END){
-                setEffect(null);
-            }
             if(ret==STATE_EFFECT_END){
                 mProcessEvent.strTag=currentEffect;
                 mObservable.notifyState(mProcessEvent);
+            }
+            if(mMode==MODE_GIFT&&ret==STATE_EFFECT_END){
+                setEffect(null);
             }
         }
     }

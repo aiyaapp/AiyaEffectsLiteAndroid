@@ -32,6 +32,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     private int[] tempTextures=new int[1];
 
     private AnimEndListener mAnimEndListener;
+    private AnimListener mFrameListener;
 
     public AnimEffectTextureView(Context context) {
         this(context,null);
@@ -82,15 +83,22 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         }else{
             mEnv.setRenderMode(GLEnvironment.RENDERMODE_CONTINUOUSLY);
             AiyaEffects.getInstance().setEffect(effect);
+            if(mFrameListener!=null){
+                mFrameListener.onAnimStart(effect);
+            }
         }
     }
 
     public boolean isAnimEffectPlaying(){
-        return AiyaEffects.getInstance().isEffectNull();
+        return !AiyaEffects.getInstance().isEffectNull();
     }
 
     public void setAnimEndListener(AnimEndListener listener){
         this.mAnimEndListener=listener;
+    }
+
+    public void setAnimListener(AnimListener listener){
+        this.mFrameListener=listener;
     }
 
     @Override
@@ -112,7 +120,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         this.mTexture=surface;
         mEnv.surfaceCreated(null);
         mEnv.surfaceChanged(null,0,width,height);
-        if (!isAnimEffectPlaying()){
+        if (isAnimEffectPlaying()){
             mEnv.onPause();
         }
     }
@@ -170,8 +178,11 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         GLES20.glClearColor(0,0,0,0);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glViewport(0,0,width,height);
-        AiyaEffects.getInstance().track(null,null,0);
+        //AiyaEffects.getInstance().track(null,null,0);
         AiyaEffects.getInstance().process(-1,0);
+        if(mFrameListener!=null&&isAnimEffectPlaying()){
+            mFrameListener.onFrame();
+        }
     }
 
     public void onResume(){
@@ -189,6 +200,9 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                 if(mAnimEndListener!=null){
                     mAnimEndListener.onAnimEnd(event.strTag);
                 }
+                if(mFrameListener!=null){
+                    mFrameListener.onAnimEnd(event.strTag);
+                }
                 mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
                 mEnv.requestRender();
                 break;
@@ -198,4 +212,10 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     public interface AnimEndListener{
         void onAnimEnd(String effect);
     }
+
+    public interface AnimListener extends AnimEndListener{
+        void onAnimStart(String effect);
+        void onFrame();
+    }
+
 }
