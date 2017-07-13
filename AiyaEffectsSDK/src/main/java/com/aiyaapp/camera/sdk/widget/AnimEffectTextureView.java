@@ -78,8 +78,9 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
 
     public void setEffect(String effect){
         if(effect==null){
-            mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
             AiyaEffects.getInstance().setEffect(null);
+            mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
+            mEnv.requestRender();
         }else{
             mEnv.setRenderMode(GLEnvironment.RENDERMODE_CONTINUOUSLY);
             AiyaEffects.getInstance().setEffect(effect);
@@ -197,14 +198,14 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     public void onAction(Event event) {
         switch (event.eventType){
             case Event.PROCESS_END:
-                if(mAnimEndListener!=null){
-                    mAnimEndListener.onAnimEnd(event.strTag);
-                }
+                mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
+                mEnv.requestRender();
                 if(mFrameListener!=null){
                     mFrameListener.onAnimEnd(event.strTag);
                 }
-                mEnv.setRenderMode(GLEnvironment.RENDERMODE_WHEN_DIRTY);
-                mEnv.requestRender();
+                if(mAnimEndListener!=null){
+                    mAnimEndListener.onAnimEnd(event.strTag);
+                }
                 break;
         }
     }

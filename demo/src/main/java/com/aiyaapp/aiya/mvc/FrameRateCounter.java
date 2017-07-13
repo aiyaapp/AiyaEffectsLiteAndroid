@@ -1,6 +1,5 @@
 package com.aiyaapp.aiya.mvc;
 
-import android.os.Build;
 import android.util.Log;
 import com.aiyaapp.camera.sdk.widget.AnimEffectTextureView;
 import java.text.DecimalFormat;

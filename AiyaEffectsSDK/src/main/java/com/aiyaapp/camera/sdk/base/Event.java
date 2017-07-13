@@ -24,6 +24,7 @@ public class Event {
     public static final int INIT_SUCCESS=0xF102;
     public static final int RESOURCE_FAILED=0xFF01;
     public static final int INIT_FAILED=0xFF02;
+    public static final int PROCESS_ERROR=0xFF10;
 
     public static final int PROCESS_PLAY=0xE002;
     public static final int PROCESS_END=0xE004;
