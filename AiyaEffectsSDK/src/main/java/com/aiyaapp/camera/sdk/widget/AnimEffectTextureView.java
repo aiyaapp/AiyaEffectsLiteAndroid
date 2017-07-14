@@ -5,12 +5,12 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.TextureView;
 import com.aiyaapp.camera.sdk.AiyaEffects;
 import com.aiyaapp.camera.sdk.base.ActionObserver;
 import com.aiyaapp.camera.sdk.base.Event;
 import com.aiyaapp.camera.sdk.base.ISdkManager;
+import com.aiyaapp.camera.sdk.base.Log;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
@@ -33,6 +33,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
 
     private AnimEndListener mAnimEndListener;
     private AnimListener mFrameListener;
+    private GLEnvironment.ErrorListener mErrorListener;
 
     public AnimEffectTextureView(Context context) {
         this(context,null);
@@ -113,26 +114,30 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     }
 
     public void setOnErrorListener(GLEnvironment.ErrorListener listener){
+        this.mErrorListener=listener;
         mEnv.setOnErrorListener(listener);
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         this.mTexture=surface;
+        Log.d("AnimE","onSurfaceTextureAvailable");
         mEnv.surfaceCreated(null);
         mEnv.surfaceChanged(null,0,width,height);
-        if (isAnimEffectPlaying()){
-            mEnv.onPause();
-        }
+        //if (isAnimEffectPlaying()){
+        //    mEnv.onPause();
+        //}
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        Log.d("AnimE","onSurfaceTextureSizeChanged");
         mEnv.surfaceChanged(null,0,width,height);
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        Log.d("AnimE","onSurfaceTextureDestroyed");
         this.mTexture=null;
         mEnv.surfaceDestroyed(null);
         return false;
@@ -187,11 +192,13 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     }
 
     public void onResume(){
-        mEnv.onResume();
+        //mEnv.onResume();
+        Log.d("AnimE","onResume");
     }
 
     public void onPause(){
-        mEnv.onPause();
+        //mEnv.onPause();
+        Log.d("AnimE","onPause");
     }
 
     @Override
@@ -205,6 +212,11 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                 }
                 if(mAnimEndListener!=null){
                     mAnimEndListener.onAnimEnd(event.strTag);
+                }
+                break;
+            case Event.PROCESS_ERROR:
+                if(mErrorListener!=null){
+                    mErrorListener.onError(event.intTag,event.strTag);
                 }
                 break;
         }

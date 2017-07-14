@@ -1,7 +1,6 @@
 package com.aiyaapp.camera.sdk;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * 核心功能的JNI接口
@@ -18,7 +17,6 @@ final class AiyaCameraJni {
     }
 
     public void setParameters(int width, int height, int format, int orientation, int flip,int outWidth, int outHeight, int outFormat, int outOrientation, int outFlip) {
-        Log.d(TAG,"setParameters width : " + width + "  height : " + height + " orientation : " + orientation + " flip : " + flip);
         nSetParameters(width, height,format, orientation, flip,outWidth, outHeight,  outFormat, outOrientation, outFlip);
     }
 
@@ -30,8 +28,8 @@ final class AiyaCameraJni {
         nControl(key,obj);
     }
 
-    public void setEffect(String effectJson){
-        nSetEffect(effectJson);
+    public int setEffect(String effectJson){
+        return nSetEffect(effectJson);
     }
 
     public int processFrame(int textureId,int width,int height,int trackIndex){
@@ -49,7 +47,7 @@ final class AiyaCameraJni {
 
     private native void nInitLicense(Object context,String licensePath);
     private native void nSetParameters(int width, int height, int format, int orientation, int flip,int outWidth, int outHeight, int outFormat, int outOrientation, int outFlip);
-    private native void nSetEffect(String effectJson);
+    private native int nSetEffect(String effectJson);
     private native int  nProcessFrame(int textureId,int width,int height,int trackIndex);
     private native int nSdkInit(Object context, String configPath, String licensePath,String
         appId,String hwId,String appKey);

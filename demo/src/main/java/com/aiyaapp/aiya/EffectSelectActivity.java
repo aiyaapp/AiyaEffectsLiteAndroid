@@ -75,7 +75,7 @@ public class EffectSelectActivity extends AppCompatActivity {
                 MenuBean m=mStickerData.get(pos);
                 String name=m.name;
                 if (name.equals("原始")) {
-                    AiyaEffects.getInstance().setEffect(null);
+                    setEffect(null);
                     mStickerAdapter.checkPos=pos;
                     v.setSelected(true);
                 }else if(name.equals("本地")){
@@ -189,7 +189,7 @@ public class EffectSelectActivity extends AppCompatActivity {
                 android.util.Log.e("wuwang","data:"+getRealFilePath(data.getData()));
                 String dataPath=getRealFilePath(data.getData());
                 if(dataPath!=null&&dataPath.endsWith(".json")){
-                    AiyaEffects.getInstance().setEffect(dataPath);
+                    setEffect(dataPath);
                 }
             }
         }

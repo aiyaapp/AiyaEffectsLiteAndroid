@@ -315,7 +315,12 @@ public class AiyaEffects implements ISdkManager {
                 setParameters(input,output);
             }
             if(nextEffect!=null&&!nextEffect.equals(currentEffect)){
-                mAiyaCameraJni.setEffect(nextEffect);
+                int setRet=mAiyaCameraJni.setEffect(nextEffect);
+                if(setRet<0){
+                    mInfoEvent.intTag=setRet;
+                    mInfoEvent.strTag="setEffect error";
+                    mObservable.notifyState(mInfoEvent);
+                }
                 currentEffect=nextEffect;
             }
             int ret= mAiyaCameraJni.processFrame(textureId,input.width,input.height,trackIndex);
@@ -323,15 +328,15 @@ public class AiyaEffects implements ISdkManager {
                 mProcessCallback.onFinished();
             }
             if(ret==STATE_EFFECT_END){
+                if(mMode==MODE_GIFT){
+                    setEffect(null);
+                }
                 mProcessEvent.strTag=currentEffect;
                 mObservable.notifyState(mProcessEvent);
             }else if(ret<0){
                 mInfoEvent.intTag=ret;
                 mInfoEvent.strTag="process error";
                 mObservable.notifyState(mInfoEvent);
-            }
-            if(mMode==MODE_GIFT&&ret==STATE_EFFECT_END){
-                setEffect(null);
             }
         }
     }
