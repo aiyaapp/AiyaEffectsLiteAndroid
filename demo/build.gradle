@@ -13,8 +13,8 @@ android {
         versionName rootProject.ext.vName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        ndk{
-            abiFilters "armeabi-v7a","x86"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
         }
 
     }
@@ -45,9 +45,9 @@ dependencies {
     compile 'com.tencent.bugly:nativecrashreport:latest.release'
 }
 
-build{
+build {
     doLast {
-        copy{
+        copy {
             from "./build/outputs/apk/demo-debug.apk"
             into "./build/outputs/apk/"
             rename {
@@ -59,6 +59,6 @@ build{
 }
 
 
-def date(){
+def date() {
     return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
 }

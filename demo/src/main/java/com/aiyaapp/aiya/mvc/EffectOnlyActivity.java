@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+
 import com.aiyaapp.aiya.EffectSelectActivity;
 import com.aiyaapp.aiya.R;
 import com.aiyaapp.aiya.util.PermissionUtils;
@@ -19,32 +20,33 @@ import com.aiyaapp.camera.sdk.widget.GLEnvironment;
 public class EffectOnlyActivity extends EffectSelectActivity {
 
     private AnimEffectTextureView mEffectView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PermissionUtils.askPermission(this,new String[]{Manifest.permission.CAMERA,Manifest
-            .permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE},10,mRunnable);
+        PermissionUtils.askPermission(this, new String[]{Manifest.permission.CAMERA, Manifest
+                .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, 10, mRunnable);
 
     }
 
-    private Runnable mRunnable=new Runnable() {
+    private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             setContentView(R.layout.activity_effect_only);
             initData();
             modelInit();
-            mEffectView=(AnimEffectTextureView) findViewById(R.id.mEffectView);
+            mEffectView = (AnimEffectTextureView) findViewById(R.id.mEffectView);
             mEffectView.setOnErrorListener(new GLEnvironment.ErrorListener() {
                 @Override
                 public void onError(int errorCode, String errorMsg) {
-                    Log.e("wuwang","mEffectViewError:"+errorMsg);
+                    Log.e("wuwang", "mEffectViewError:" + errorMsg);
                 }
             });
             mEffectView.setAnimListener(new FrameRateCounter());
         }
     };
 
-    private void modelInit(){
+    private void modelInit() {
 
     }
 
@@ -56,7 +58,7 @@ public class EffectOnlyActivity extends EffectSelectActivity {
     @Override
     public void onClick(View view) {
         super.onClick(view);
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.mShutter:
                 break;
         }
@@ -65,7 +67,7 @@ public class EffectOnlyActivity extends EffectSelectActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(mEffectView!=null){
+        if (mEffectView != null) {
             mEffectView.onResume();
         }
     }
@@ -73,7 +75,7 @@ public class EffectOnlyActivity extends EffectSelectActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mEffectView!=null){
+        if (mEffectView != null) {
             mEffectView.onPause();
         }
     }

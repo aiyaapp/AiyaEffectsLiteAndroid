@@ -41,6 +41,6 @@ public class Parameter {
      */
     public boolean flip;
 
-    public float trackScale=1.0f;
+    public float trackScale = 1.0f;
 
 }

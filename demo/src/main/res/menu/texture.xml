@@ -5,17 +5,17 @@
         android:id="@+id/mCamera1Api"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="Camera1Api"/>
+        android:title="Camera1Api" />
 
     <item
         android:id="@+id/mCamera2Api"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="Camera2Api"/>
+        android:title="Camera2Api" />
 
     <item
         android:id="@+id/mMedia"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="Media"/>
+        android:title="Media" />
 </menu>

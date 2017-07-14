@@ -1,20 +1,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true" >
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-    android:text="@string/open_effect"
-    android:gravity="center"
-    android:textSize="28sp"
-    android:textColor="#FFFFFFFF"/>
+    android:keepScreenOn="true">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/open_effect"
+        android:gravity="center"
+        android:textSize="28sp"
+        android:textColor="#FFFFFFFF" />
+
     <SurfaceView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mSurfaceView"/>
+        android:id="@+id/mSurfaceView" />
+
     <com.aiyaapp.camera.sdk.etest.EDataShow
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:id="@+id/mDataShow"  />
+        android:id="@+id/mDataShow" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +29,8 @@
         android:layout_marginTop="40dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:id="@+id/mOtherMenu" >
+        android:id="@+id/mOtherMenu">
+
         <TextView
             style="@style/NormalMenu"
             android:layout_alignParentLeft="true"
@@ -32,13 +39,15 @@
             android:onClick="onClick"
             android:layout_centerVertical="true"
             android:id="@+id/mLeft" />
+
         <ImageButton
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/btn_shutter_background"
             android:id="@+id/mShutter"
             android:onClick="onClick"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
+
         <TextView
             style="@style/NormalMenu"
             android:layout_alignParentRight="true"
@@ -48,10 +57,10 @@
             android:onClick="onClick"
             android:id="@+id/mRight" />
     </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/mOtherMenu"
-        android:id="@+id/mMenuView" >
-    </android.support.v7.widget.RecyclerView>
+        android:id="@+id/mMenuView"></android.support.v7.widget.RecyclerView>
 </RelativeLayout>

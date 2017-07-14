@@ -4,8 +4,10 @@ import android.opengl.GLUtils;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.Surface;
+
 import com.aiyaapp.camera.sdk.base.Log;
 import com.aiyaapp.camera.sdk.base.Renderer;
+
 import javax.microedition.khronos.egl.EGL;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -20,7 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class GLHelper {
 
-    private final static Object mLock=new Object();
+    private final static Object mLock = new Object();
 
     private EGL10 mEgl;
     private EGLContext mEglContext;
@@ -28,25 +30,25 @@ public class GLHelper {
     private EGLConfig mEglConfig;
     private EGLSurface mEglSurface;
 
-    private int mWidth,mHeight;
+    private int mWidth, mHeight;
 
-    private final int EGL_CONTEXT_CLIENT_VERSION=12440;
-    private final int EGL_OPENGL_ES2_BIT=4;
+    private final int EGL_CONTEXT_CLIENT_VERSION = 12440;
+    private final int EGL_OPENGL_ES2_BIT = 4;
 
     private Object mSurface;
     private Renderer mRenderer;
 
     private Thread mThread;
 
-    private boolean isCreated=false;
-    private boolean isRequestRender=true;
+    private boolean isCreated = false;
+    private boolean isRequestRender = true;
 
-    public GLHelper(){
+    public GLHelper() {
         startThread();
     }
 
-    private void startThread(){
-        mThread=new Thread(new Runnable() {
+    private void startThread() {
+        mThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -59,129 +61,128 @@ public class GLHelper {
         mThread.start();
     }
 
-    private boolean created(){
-        if(!isCreated){
-            mEgl= (EGL10)EGLContext.getEGL();
-            mEglDisplay=mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-            int[] minor=new int[2];
-            if(!mEgl.eglInitialize(mEglDisplay,minor)){
-                throw new RuntimeException("eglInitialize failed :"+ eglError());
+    private boolean created() {
+        if (!isCreated) {
+            mEgl = (EGL10) EGLContext.getEGL();
+            mEglDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
+            int[] minor = new int[2];
+            if (!mEgl.eglInitialize(mEglDisplay, minor)) {
+                throw new RuntimeException("eglInitialize failed :" + eglError());
             }
             int[] configAttribs = {
-                EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT,      //前台渲染
-                EGL10.EGL_ALPHA_SIZE, 8,
-                EGL10.EGL_BLUE_SIZE, 8,
-                EGL10.EGL_GREEN_SIZE, 8,
-                EGL10.EGL_RED_SIZE, 8,
-                EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                EGL10.EGL_NONE
+                    EGL10.EGL_SURFACE_TYPE, EGL10.EGL_WINDOW_BIT,      //前台渲染
+                    EGL10.EGL_ALPHA_SIZE, 8,
+                    EGL10.EGL_BLUE_SIZE, 8,
+                    EGL10.EGL_GREEN_SIZE, 8,
+                    EGL10.EGL_RED_SIZE, 8,
+                    EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                    EGL10.EGL_NONE
             };
-            int []numConfigs = new int[1];
+            int[] numConfigs = new int[1];
             EGLConfig[] configs = new EGLConfig[1];
             if (!mEgl.eglChooseConfig(mEglDisplay, configAttribs, configs, 1, numConfigs)) {
-                throw new RuntimeException("eglChooseConfig failed : " +eglError());
+                throw new RuntimeException("eglChooseConfig failed : " + eglError());
             }
-            mEglConfig=configs[0];
+            mEglConfig = configs[0];
             int[] contextAttribs = {
-                EGL_CONTEXT_CLIENT_VERSION, 2,
-                EGL10.EGL_NONE
+                    EGL_CONTEXT_CLIENT_VERSION, 2,
+                    EGL10.EGL_NONE
             };
             mEglContext = mEgl.eglCreateContext(mEglDisplay, mEglConfig, EGL10.EGL_NO_CONTEXT,
-                contextAttribs);
+                    contextAttribs);
 
-            if(mSurface!=null){
-                mEglSurface=mEgl.eglCreateWindowSurface(mEglDisplay,mEglConfig,mSurface,null);
+            if (mSurface != null) {
+                mEglSurface = mEgl.eglCreateWindowSurface(mEglDisplay, mEglConfig, mSurface, null);
             }
-            if(mEglSurface==null||mEglSurface==EGL10.EGL_NO_SURFACE){
+            if (mEglSurface == null || mEglSurface == EGL10.EGL_NO_SURFACE) {
                 return false;
             }
             //mEgl.eglCreatePbufferSurface(mEglDisplay,mEglConfig,)
 
-            if(!mEgl.eglMakeCurrent(mEglDisplay,mEglSurface,mEglSurface,mEglContext)){
-                Log.e("wuwang","eglMakeCurrent error:"+mEgl.eglGetError());
+            if (!mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext)) {
+                Log.e("wuwang", "eglMakeCurrent error:" + mEgl.eglGetError());
                 return false;
             }
-            if(mRenderer!=null){
-                mRenderer.onSurfaceCreated((GL10) mEglContext.getGL(),mEglConfig);
+            if (mRenderer != null) {
+                mRenderer.onSurfaceCreated((GL10) mEglContext.getGL(), mEglConfig);
             }
-            isCreated=true;
+            isCreated = true;
         }
         return true;
     }
 
-    private void change(){
+    private void change() {
 
     }
 
-    private void destroy(){
+    private void destroy() {
 
     }
 
-    private void draw(){
-        if(mRenderer!=null){
+    private void draw() {
+        if (mRenderer != null) {
             mRenderer.onDrawFrame((GL10) mEglContext.getGL());
         }
     }
 
-    private String eglError(){
+    private String eglError() {
         return GLUtils.getEGLErrorString(mEgl.eglGetError());
     }
 
     private void guardedRun() throws InterruptedException {
 
 
-
-        while (true){
-            synchronized(mLock){
+        while (true) {
+            synchronized (mLock) {
                 mLock.wait();
             }
-            if(created()&&isRequestRender){
+            if (created() && isRequestRender) {
                 change();
                 draw();
-                isRequestRender=false;
+                isRequestRender = false;
             }
         }
     }
 
-    public void setSurface(Object surface){
-        this.mSurface=surface;
+    public void setSurface(Object surface) {
+        this.mSurface = surface;
     }
 
-    public void setRenderer(Renderer renderer){
-        this.mRenderer=renderer;
+    public void setRenderer(Renderer renderer) {
+        this.mRenderer = renderer;
     }
 
-    public void requestRender(){
-        Log.e("wuwang","glHelper try request render");
-        synchronized(mLock){
-            Log.e("wuwang","glHelper request render");
-            isRequestRender=true;
+    public void requestRender() {
+        Log.e("wuwang", "glHelper try request render");
+        synchronized (mLock) {
+            Log.e("wuwang", "glHelper request render");
+            isRequestRender = true;
             mLock.notifyAll();
         }
     }
 
-    public void glCreate(){
+    public void glCreate() {
 
     }
 
-    public void glChangeSize(int width,int height){
-        this.mWidth=width;
-        this.mHeight=height;
+    public void glChangeSize(int width, int height) {
+        this.mWidth = width;
+        this.mHeight = height;
     }
 
-    public void glDraw(){
-
-    }
-
-    public void glDestroy(){
+    public void glDraw() {
 
     }
 
-    public void glPause(){
+    public void glDestroy() {
 
     }
 
-    public void glResume(){
+    public void glPause() {
+
+    }
+
+    public void glResume() {
 
     }
 

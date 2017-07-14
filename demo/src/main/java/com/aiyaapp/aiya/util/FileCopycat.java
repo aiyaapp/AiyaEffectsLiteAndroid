@@ -29,60 +29,60 @@ public class FileCopycat {
 
     private static FileCopycat instance;
 
-    public static FileCopycat getInstance(){
-        if(instance==null){
-            synchronized (FileCopycat.class){
-                if(instance==null){
-                    instance=new FileCopycat();
+    public static FileCopycat getInstance() {
+        if (instance == null) {
+            synchronized (FileCopycat.class) {
+                if (instance == null) {
+                    instance = new FileCopycat();
                 }
             }
         }
         return instance;
     }
 
-    private FileCopycat(){
-        mExecutor=Executors.newFixedThreadPool(5);
+    private FileCopycat() {
+        mExecutor = Executors.newFixedThreadPool(5);
     }
 
-    public void setParent(String path){
-        if(!path.endsWith(File.separator)){
-            this.parentPath=path+File.separator;
-        }else{
-            this.parentPath=path;
+    public void setParent(String path) {
+        if (!path.endsWith(File.separator)) {
+            this.parentPath = path + File.separator;
+        } else {
+            this.parentPath = path;
         }
-        File file=new File(parentPath);
-        if(!file.exists()){
-            boolean b=file.mkdirs();
+        File file = new File(parentPath);
+        if (!file.exists()) {
+            boolean b = file.mkdirs();
             //TODO something
         }
     }
 
     public void copyAssets(final AssetManager manager, final String src, String dst,
-                               final int code, final Call<String> call){
-        final File file=new File(parentPath+dst);
-        if(file.exists()){
-            call.onCall(code,file.getAbsolutePath());
-        }else{
+                           final int code, final Call<String> call) {
+        final File file = new File(parentPath + dst);
+        if (file.exists()) {
+            call.onCall(code, file.getAbsolutePath());
+        } else {
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    copyAssetsFolder(manager,src,file.getAbsolutePath());
-                    call.onCall(code,file.getAbsolutePath());
+                    copyAssetsFolder(manager, src, file.getAbsolutePath());
+                    call.onCall(code, file.getAbsolutePath());
                 }
             });
         }
     }
 
-    public void copySd(String src,String dst,int code,Call<String> call){
+    public void copySd(String src, String dst, int code, Call<String> call) {
 
     }
 
     //文件不存在，则复制assets中文件
-    private boolean copyAssetsFile(AssetManager manager,String src, String dst) {
+    private boolean copyAssetsFile(AssetManager manager, String src, String dst) {
         InputStream in;
         OutputStream out;
         try {
-            File dstFile=new File(dst);
+            File dstFile = new File(dst);
             if (!dstFile.exists()) {
                 in = manager.open(src);
                 out = new FileOutputStream(dstFile);
@@ -94,8 +94,8 @@ public class FileCopycat {
                 out.flush();
                 out.close();
                 in.close();
-            }else{
-                Log.d("file exits : " +dst);
+            } else {
+                Log.d("file exits : " + dst);
             }
         } catch (Exception e) {
             Log.e(e.getMessage());
@@ -105,27 +105,27 @@ public class FileCopycat {
     }
 
     //递归复制assets文件到指定目录
-    private boolean copyAssetsFolder(AssetManager manager,String src, String dst) {
+    private boolean copyAssetsFolder(AssetManager manager, String src, String dst) {
         try {
             String[] files = manager.list(src);
             if (files.length > 0) {     //如果是文件夹
                 File folder = new File(dst);
-                if(!folder.exists()){
+                if (!folder.exists()) {
                     boolean b = folder.mkdirs();
-                    Log.d("create folder : "+dst);
+                    Log.d("create folder : " + dst);
                     if (!b) {
                         Log.e("create folder failed:" + dst);
                         return false;
                     }
                 }
                 for (String fileName : files) {
-                    if (!copyAssetsFolder(manager,src + File.separator + fileName, dst +
-                        File.separator + fileName)) {
+                    if (!copyAssetsFolder(manager, src + File.separator + fileName, dst +
+                            File.separator + fileName)) {
                         return false;
                     }
                 }
             } else {  //如果是文件
-                if(!copyAssetsFile(manager,src, dst)){
+                if (!copyAssetsFile(manager, src, dst)) {
                     return false;
                 }
             }

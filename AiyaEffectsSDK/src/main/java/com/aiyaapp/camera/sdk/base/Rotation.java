@@ -19,8 +19,8 @@ public enum Rotation {
 
     private int angle;
 
-    Rotation(int angle){
-        this.angle=angle;
+    Rotation(int angle) {
+        this.angle = angle;
     }
 
     public int asInt() {
@@ -28,10 +28,10 @@ public enum Rotation {
     }
 
     public static Rotation fromInt(int rotation) {
-        for(Rotation s:Rotation.values()){
-            if(rotation==s.angle)return s;
+        for (Rotation s : Rotation.values()) {
+            if (rotation == s.angle) return s;
         }
-        throw new IllegalStateException(rotation+"不存在，只能为0、90、180、270");
+        throw new IllegalStateException(rotation + "不存在，只能为0、90、180、270");
     }
 
 }

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,8 +51,8 @@ public class EffectSelectActivity extends AppCompatActivity {
     private ArrayList<MenuBean> mStickerData;
     private RecyclerView mMenuView;
     private MenuAdapter mStickerAdapter;
-    private TextView mBtnStick,mBtnBeauty;
-    private int mBeautyFlag=0;
+    private TextView mBtnStick, mBtnBeauty;
+    private int mBeautyFlag = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,33 +60,33 @@ public class EffectSelectActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    protected void initData(){
-        mMenuView= (RecyclerView)findViewById(R.id.mMenuView);
-        mBtnStick= (TextView)findViewById(R.id.mLeft);
-        mBtnBeauty= (TextView)findViewById(R.id.mRight);
+    protected void initData() {
+        mMenuView = (RecyclerView) findViewById(R.id.mMenuView);
+        mBtnStick = (TextView) findViewById(R.id.mLeft);
+        mBtnBeauty = (TextView) findViewById(R.id.mRight);
         mBtnStick.setSelected(true);
         refreshRightBtn();
 
-        mStickerData=new ArrayList<>();
-        mMenuView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
-        mStickerAdapter=new MenuAdapter(this,mStickerData);
+        mStickerData = new ArrayList<>();
+        mMenuView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mStickerAdapter = new MenuAdapter(this, mStickerData);
         mStickerAdapter.setOnClickListener(new ClickUtils.OnClickListener() {
             @Override
             public void onClick(View v, int type, int pos, int child) {
-                MenuBean m=mStickerData.get(pos);
-                String name=m.name;
+                MenuBean m = mStickerData.get(pos);
+                String name = m.name;
                 if (name.equals("原始")) {
                     setEffect(null);
-                    mStickerAdapter.checkPos=pos;
+                    mStickerAdapter.checkPos = pos;
                     v.setSelected(true);
-                }else if(name.equals("本地")){
+                } else if (name.equals("本地")) {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("*/*");
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    startActivityForResult(Intent.createChooser(intent, "请选择一个json文件"),101);
-                }else{
-                    setEffect("assets/modelsticker/"+m.path);
-                    mStickerAdapter.checkPos=pos;
+                    startActivityForResult(Intent.createChooser(intent, "请选择一个json文件"), 101);
+                } else {
+                    setEffect("assets/modelsticker/" + m.path);
+                    mStickerAdapter.checkPos = pos;
                     v.setSelected(true);
                 }
                 mStickerAdapter.notifyDataSetChanged();
@@ -95,17 +96,17 @@ public class EffectSelectActivity extends AppCompatActivity {
         initEffectMenu("modelsticker/stickers.json");
     }
 
-    protected void setEffect(String effect){
+    protected void setEffect(String effect) {
 
     }
 
     //刷新美颜按钮
-    public void refreshRightBtn(){
-        if(mBeautyFlag==0){
+    public void refreshRightBtn() {
+        if (mBeautyFlag == 0) {
             mBtnBeauty.setText("美颜关");
             mBtnBeauty.setSelected(false);
-        }else{
-            mBtnBeauty.setText("美颜"+mBeautyFlag);
+        } else {
+            mBtnBeauty.setText("美颜" + mBeautyFlag);
             mBtnBeauty.setSelected(true);
         }
     }
@@ -113,7 +114,7 @@ public class EffectSelectActivity extends AppCompatActivity {
     //初始化特效按钮菜单
     protected void initEffectMenu(String menuPath) {
         try {
-            Log.e( "解析菜单->" +menuPath);
+            Log.e("解析菜单->" + menuPath);
             JsonReader r = new JsonReader(new InputStreamReader(getAssets().open(menuPath)));
             r.beginArray();
             while (r.hasNext()) {
@@ -129,13 +130,13 @@ public class EffectSelectActivity extends AppCompatActivity {
                     }
                 }
                 mStickerData.add(menu);
-                Log.e( "增加菜单->" + menu.name);
+                Log.e("增加菜单->" + menu.name);
                 r.endObject();
             }
             r.endArray();
-            MenuBean bean=new MenuBean();
-            bean.name="本地";
-            bean.path="";
+            MenuBean bean = new MenuBean();
+            bean.name = "本地";
+            bean.path = "";
             mStickerData.add(bean);
             mStickerAdapter.notifyDataSetChanged();
         } catch (IOException e) {
@@ -145,34 +146,34 @@ public class EffectSelectActivity extends AppCompatActivity {
     }
 
     //View的点击事件处理
-    public void onClick(View view){
-        switch (view.getId()){
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.mLeft:
-                mMenuView.setVisibility(mMenuView.getVisibility()==View.VISIBLE?
-                    View.GONE:View.VISIBLE);
-                view.setSelected(mMenuView.getVisibility()==View.VISIBLE);
+                mMenuView.setVisibility(mMenuView.getVisibility() == View.VISIBLE ?
+                        View.GONE : View.VISIBLE);
+                view.setSelected(mMenuView.getVisibility() == View.VISIBLE);
                 break;
             case R.id.mRight:
-                mBeautyFlag=++mBeautyFlag>=7?0:mBeautyFlag;
-                AiyaEffects.getInstance().set(ISdkManager.SET_BEAUTY_LEVEL,mBeautyFlag);
+                mBeautyFlag = ++mBeautyFlag >= 7 ? 0 : mBeautyFlag;
+                AiyaEffects.getInstance().set(ISdkManager.SET_BEAUTY_LEVEL, mBeautyFlag);
                 refreshRightBtn();
                 break;
         }
     }
 
 
-    protected String getSD(){
+    protected String getSD() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
 
-    public void saveBitmapAsync(final byte[] bytes,final int width,final int height){
+    public void saveBitmapAsync(final byte[] bytes, final int width, final int height) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 LogUtils.e("has take pic");
-                Bitmap bitmap=Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-                ByteBuffer b=ByteBuffer.wrap(bytes);
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                ByteBuffer b = ByteBuffer.wrap(bytes);
                 bitmap.copyPixelsFromBuffer(b);
                 saveBitmap(bitmap);
                 bitmap.recycle();
@@ -183,33 +184,33 @@ public class EffectSelectActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("wuwang","onActivityResult:rq:"+requestCode+"/"+resultCode);
-        if(requestCode==101){
-            if(resultCode==RESULT_OK){
-                android.util.Log.e("wuwang","data:"+getRealFilePath(data.getData()));
-                String dataPath=getRealFilePath(data.getData());
-                if(dataPath!=null&&dataPath.endsWith(".json")){
+        Log.d("wuwang", "onActivityResult:rq:" + requestCode + "/" + resultCode);
+        if (requestCode == 101) {
+            if (resultCode == RESULT_OK) {
+                android.util.Log.e("wuwang", "data:" + getRealFilePath(data.getData()));
+                String dataPath = getRealFilePath(data.getData());
+                if (dataPath != null && dataPath.endsWith(".json")) {
                     setEffect(dataPath);
                 }
             }
         }
     }
 
-    public String getRealFilePath(final Uri uri ) {
-        if ( null == uri ) return null;
+    public String getRealFilePath(final Uri uri) {
+        if (null == uri) return null;
         final String scheme = uri.getScheme();
         String data = null;
-        if ( scheme == null )
+        if (scheme == null)
             data = uri.getPath();
-        else if ( ContentResolver.SCHEME_FILE.equals( scheme ) ) {
+        else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
             data = uri.getPath();
-        } else if ( ContentResolver.SCHEME_CONTENT.equals( scheme ) ) {
-            Cursor cursor = getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
-            if ( null != cursor ) {
-                if ( cursor.moveToFirst() ) {
-                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
-                    if ( index > -1 ) {
-                        data = cursor.getString( index );
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            Cursor cursor = getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+            if (null != cursor) {
+                if (cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    if (index > -1) {
+                        data = cursor.getString(index);
                     }
                 }
                 cursor.close();
@@ -219,10 +220,10 @@ public class EffectSelectActivity extends AppCompatActivity {
     }
 
     //图片保存
-    public void saveBitmap(Bitmap b){
-        String path =  getSD()+ "/AiyaCamera/photo/";
-        File folder=new File(path);
-        if(!folder.exists()&&!folder.mkdirs()){
+    public void saveBitmap(Bitmap b) {
+        String path = getSD() + "/AiyaCamera/photo/";
+        File folder = new File(path);
+        if (!folder.exists() && !folder.mkdirs()) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -232,7 +233,7 @@ public class EffectSelectActivity extends AppCompatActivity {
             return;
         }
         long dataTake = System.currentTimeMillis();
-        final String jpegName=path+ dataTake +".jpg";
+        final String jpegName = path + dataTake + ".jpg";
         try {
             FileOutputStream fout = new FileOutputStream(jpegName);
             BufferedOutputStream bos = new BufferedOutputStream(fout);
@@ -246,7 +247,7 @@ public class EffectSelectActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(EffectSelectActivity.this, "保存成功->"+jpegName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(EffectSelectActivity.this, "保存成功->" + jpegName, Toast.LENGTH_SHORT).show();
             }
         });
 

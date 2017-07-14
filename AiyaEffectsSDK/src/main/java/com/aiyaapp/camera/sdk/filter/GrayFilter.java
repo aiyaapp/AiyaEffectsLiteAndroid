@@ -18,7 +18,7 @@ public class GrayFilter extends AFilter {
     @Override
     protected void onCreate() {
         createProgramByAssetsFile("shader/base_vertex.sh",
-            "shader/color/gray_fragment.frag");
+                "shader/color/gray_fragment.frag");
     }
 
     @Override

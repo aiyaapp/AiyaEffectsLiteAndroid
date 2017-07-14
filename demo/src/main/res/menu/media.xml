@@ -5,5 +5,5 @@
         android:id="@+id/mShowType"
         android:orderInCategory="100"
         app:showAsAction="always"
-        android:title="@string/show_type"/>
+        android:title="@string/show_type" />
 </menu>

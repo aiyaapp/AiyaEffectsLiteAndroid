@@ -2,7 +2,7 @@
 
 buildscript {
     repositories {
-              jcenter()
+        jcenter()
 //        maven {
 //            url "http://192.168.1.13:8081/nexus/content/repositories/thirdparty/"
 //        }
@@ -15,15 +15,15 @@ buildscript {
     }
 }
 
-ext{
-    vCode=320
-    vName="v3.2.0"
+ext {
+    vCode = 320
+    vName = "v3.2.0"
 }
 
 
 allprojects {
     repositories {
-               jcenter()
+        jcenter()
 //        maven {
 //            url "http://192.168.1.13:8081/nexus/content/repositories/thirdparty/"
 //        }

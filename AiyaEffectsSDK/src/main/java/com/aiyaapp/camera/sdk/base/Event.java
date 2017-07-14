@@ -20,14 +20,14 @@ public class Event {
     //0xF800-0xFF00之间表示为warming状态
     //其他状态为error状态
 
-    public static final int RESOURCE_READY=0xF101;
-    public static final int INIT_SUCCESS=0xF102;
-    public static final int RESOURCE_FAILED=0xFF01;
-    public static final int INIT_FAILED=0xFF02;
-    public static final int PROCESS_ERROR=0xFF10;
+    public static final int RESOURCE_READY = 0xF101;
+    public static final int INIT_SUCCESS = 0xF102;
+    public static final int RESOURCE_FAILED = 0xFF01;
+    public static final int INIT_FAILED = 0xFF02;
+    public static final int PROCESS_ERROR = 0xFF10;
 
-    public static final int PROCESS_PLAY=0xE002;
-    public static final int PROCESS_END=0xE004;
+    public static final int PROCESS_PLAY = 0xE002;
+    public static final int PROCESS_END = 0xE004;
 
     public int eventType;
     public int intTag;
@@ -42,12 +42,12 @@ public class Event {
         this.data = data;
     }
 
-    public boolean isInitEvent(){
-        return eventType>0xF000 && eventType<0xFFFF;
+    public boolean isInitEvent() {
+        return eventType > 0xF000 && eventType < 0xFFFF;
     }
 
-    public boolean isProcessEvent(){
-        return eventType>0xE001 && eventType<0xE100;
+    public boolean isProcessEvent() {
+        return eventType > 0xE001 && eventType < 0xE100;
     }
 
 }

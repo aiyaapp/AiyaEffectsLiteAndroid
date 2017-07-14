@@ -19,31 +19,31 @@ import android.support.v4.app.ActivityCompat;
 public class PermissionUtils {
 
 
-    public static void askPermission(Activity context, String[] permissions,int req, Runnable
-        runnable){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            int result= 0;
-            for(String a:permissions){
-                result+=ActivityCompat.checkSelfPermission(context,a);
+    public static void askPermission(Activity context, String[] permissions, int req, Runnable
+            runnable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int result = 0;
+            for (String a : permissions) {
+                result += ActivityCompat.checkSelfPermission(context, a);
             }
-            if(result== PackageManager.PERMISSION_GRANTED){
+            if (result == PackageManager.PERMISSION_GRANTED) {
                 runnable.run();
-            }else{
-                ActivityCompat.requestPermissions(context,permissions,req);
+            } else {
+                ActivityCompat.requestPermissions(context, permissions, req);
             }
-        }else{
+        } else {
             runnable.run();
         }
     }
 
-    public static void onRequestPermissionsResult(boolean isReq,int[] grantResults,Runnable
-        okRun,Runnable deniRun){
-        if(isReq){
-            boolean b=true;
-            for (int a:grantResults){
-                b&=(a==PackageManager.PERMISSION_GRANTED);
+    public static void onRequestPermissionsResult(boolean isReq, int[] grantResults, Runnable
+            okRun, Runnable deniRun) {
+        if (isReq) {
+            boolean b = true;
+            for (int a : grantResults) {
+                b &= (a == PackageManager.PERMISSION_GRANTED);
             }
-            if (grantResults.length > 0&&b) {
+            if (grantResults.length > 0 && b) {
                 okRun.run();
             } else {
                 deniRun.run();

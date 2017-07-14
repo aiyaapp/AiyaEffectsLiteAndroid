@@ -11,15 +11,15 @@ public class BaseFilter extends AFilter {
     private String vert;
     private String frag;
 
-    public BaseFilter(String vert,String frag){
+    public BaseFilter(String vert, String frag) {
         super(null);
-        this.vert=vert;
-        this.frag=frag;
+        this.vert = vert;
+        this.frag = frag;
     }
 
     @Override
     protected void onCreate() {
-        createProgram(vert,frag);
+        createProgram(vert, frag);
     }
 
     @Override

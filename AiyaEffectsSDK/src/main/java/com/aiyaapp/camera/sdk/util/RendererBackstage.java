@@ -22,71 +22,71 @@ public class RendererBackstage {
 
     private GLThread mGLThread;
     private int renderMode;
-    private int mWidth,mHeight;
+    private int mWidth, mHeight;
     boolean mPreserveEglContextOnPause;
     Object output;
     Renderer mRenderer;
 
-    public RendererBackstage(){
-        mPreserveEglContextOnPause=true;
-        renderMode=GLSurfaceView.RENDERMODE_WHEN_DIRTY;
+    public RendererBackstage() {
+        mPreserveEglContextOnPause = true;
+        renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY;
     }
 
-    public void start(){
-        mGLThread=new GLThread(new WeakReference<>(this));
+    public void start() {
+        mGLThread = new GLThread(new WeakReference<>(this));
         mGLThread.setRenderMode(renderMode);
         mGLThread.start();
     }
 
-    public void setOutput(Object output){
-        this.output=output;
-        if(mGLThread!=null){
+    public void setOutput(Object output) {
+        this.output = output;
+        if (mGLThread != null) {
             mGLThread.requestRender();
         }
     }
 
-    public void setSize(int width,int height){
-        this.mWidth=width;
-        this.mHeight=height;
-        if(mGLThread!=null){
-            mGLThread.setWindowSize(width,height);
+    public void setSize(int width, int height) {
+        this.mWidth = width;
+        this.mHeight = height;
+        if (mGLThread != null) {
+            mGLThread.setWindowSize(width, height);
             requestRender();
         }
     }
 
-    public void onResume(){
-        if(mGLThread!=null){
+    public void onResume() {
+        if (mGLThread != null) {
             mGLThread.onResume();
         }
     }
 
-    public void onPause(){
-        if(mGLThread!=null){
+    public void onPause() {
+        if (mGLThread != null) {
             mGLThread.onPause();
         }
     }
 
-    public void onDestroy(){
-        if(mGLThread!=null){
+    public void onDestroy() {
+        if (mGLThread != null) {
             mGLThread.requestExit();
         }
     }
 
-    public void setPreserveEglContextOnPause(boolean preserveEglContextOnPause){
-        this.mPreserveEglContextOnPause=preserveEglContextOnPause;
+    public void setPreserveEglContextOnPause(boolean preserveEglContextOnPause) {
+        this.mPreserveEglContextOnPause = preserveEglContextOnPause;
     }
 
-    public void requestRender(){
+    public void requestRender() {
         mGLThread.requestRender();
     }
 
-    public void setRenderer(Renderer renderer){
-        this.mRenderer=renderer;
+    public void setRenderer(Renderer renderer) {
+        this.mRenderer = renderer;
     }
 
-    public void setRenderMode(int mode){
-        this.renderMode=mode;
-        if(mGLThread!=null){
+    public void setRenderMode(int mode) {
+        this.renderMode = mode;
+        if (mGLThread != null) {
             mGLThread.setRenderMode(this.renderMode);
         }
     }

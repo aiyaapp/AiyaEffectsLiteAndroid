@@ -8,6 +8,7 @@
 package com.aiyaapp.camera.sdk;
 
 import android.annotation.SuppressLint;
+
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,8 +31,8 @@ import com.aiyaapp.camera.sdk.base.ActionObserver;
 import com.aiyaapp.camera.sdk.base.TrackCallback;
 
 /**
- *  Sdk的核心接口，将工作线程、GL线程、人脸追踪线程分开，
- *  提高SDK对视频流的处理速度。
+ * Sdk的核心接口，将工作线程、GL线程、人脸追踪线程分开，
+ * 提高SDK对视频流的处理速度。
  */
 public class AiyaEffects implements ISdkManager {
 
@@ -48,46 +49,46 @@ public class AiyaEffects implements ISdkManager {
     private HandlerThread mWorkThread;
     private Handler mWorkHandler;
 
-    private Parameter input,output;
-    private String nextEffect,currentEffect;
+    private Parameter input, output;
+    private String nextEffect, currentEffect;
 
     private ProcessCallback mProcessCallback;
     private TrackCallback mTrackCallback;
 
     private ExecutorService mTrackExecutor;
 
-    private int mInWidth=720;
-    private int mInHeight=1280;
-    private int mOutWidth=720;
-    private int mOutHeight=1280;
+    private int mInWidth = 720;
+    private int mInHeight = 1280;
+    private int mOutWidth = 720;
+    private int mOutHeight = 1280;
 
-    private int mTrackWidth=180;
-    private int mTrackHeight=320;
-    private boolean isSetParam=false;
+    private int mTrackWidth = 180;
+    private int mTrackHeight = 320;
+    private boolean isSetParam = false;
 
-    private int mMode=0;
+    private int mMode = 0;
 
-    private boolean isResourceReady=false;
+    private boolean isResourceReady = false;
     private Semaphore mSemaphore;
 
     private Object assetManager;
 
     private String DEVICE_ID;
 
-    private int forceCloseTrack=FALSE;
+    private int forceCloseTrack = FALSE;
 
-    private Event mProcessEvent=new Event(Event.PROCESS_END,Event.PROCESS_PLAY,"",null);
-    private Event mInfoEvent=new Event(Event.PROCESS_ERROR,0,"",null);
+    private Event mProcessEvent = new Event(Event.PROCESS_END, Event.PROCESS_PLAY, "", null);
+    private Event mInfoEvent = new Event(Event.PROCESS_ERROR, 0, "", null);
 
-    private AiyaEffects(){
-        mObservable=new ActionObservable();
+    private AiyaEffects() {
+        mObservable = new ActionObservable();
     }
 
-    public static AiyaEffects getInstance(){
-        if(instance==null){
-            synchronized (AiyaEffects.class){
-                if(instance==null){
-                    instance=new AiyaEffects();
+    public static AiyaEffects getInstance() {
+        if (instance == null) {
+            synchronized (AiyaEffects.class) {
+                if (instance == null) {
+                    instance = new AiyaEffects();
                 }
             }
         }
@@ -95,40 +96,40 @@ public class AiyaEffects implements ISdkManager {
     }
 
     @Override
-    public void registerObserver(ActionObserver observer){
+    public void registerObserver(ActionObserver observer) {
         mObservable.registerObserver(observer);
     }
 
     @Override
-    public void unRegisterObserver(ActionObserver observer){
+    public void unRegisterObserver(ActionObserver observer) {
         mObservable.unRegisterObserver(observer);
     }
 
-    private void cInit(){
-        mSemaphore=new Semaphore(1,true);
-        mAiyaCameraJni=new AiyaCameraJni();
-        mWorkThread=new HandlerThread("Sdk Work Thread");
+    private void cInit() {
+        mSemaphore = new Semaphore(1, true);
+        mAiyaCameraJni = new AiyaCameraJni();
+        mWorkThread = new HandlerThread("Sdk Work Thread");
         mWorkThread.start();
-        mWorkHandler=new Handler(mWorkThread.getLooper());
-        mTrackExecutor= Executors.newFixedThreadPool(1);
+        mWorkHandler = new Handler(mWorkThread.getLooper());
+        mTrackExecutor = Executors.newFixedThreadPool(1);
     }
 
-    private boolean prepareResource(Context context,String licensePath){
+    private boolean prepareResource(Context context, String licensePath) {
         Log.d("prepare Resource");
-        Assets assets=new Assets(context,licensePath);
+        Assets assets = new Assets(context, licensePath);
         return assets.doCopy();
     }
 
     @SuppressLint("HardwareIds")
     @Deprecated
-    public void init(final Context context,final String configPath,final String appKey) {
+    public void init(final Context context, final String configPath, final String appKey) {
         Log.e("sdk init");
-        TelephonyManager tm = (TelephonyManager)context.getSystemService(Context
-            .TELEPHONY_SERVICE);
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context
+                .TELEPHONY_SERVICE);
         DEVICE_ID = tm.getDeviceId();
-        if(DEVICE_ID==null)DEVICE_ID=android.os.Build.SERIAL;
-        System.setProperty("ay.effects.debug","1");
-        assetManager=context.getAssets();
+        if (DEVICE_ID == null) DEVICE_ID = android.os.Build.SERIAL;
+        System.setProperty("ay.effects.debug", "1");
+        assetManager = context.getAssets();
         cInit();
         mWorkHandler.post(new Runnable() {
             @SuppressLint("HardwareIds")
@@ -136,27 +137,27 @@ public class AiyaEffects implements ISdkManager {
             public void run() {
                 Log.e("start prepare resource");
                 boolean pb;
-                if(new File(configPath).exists()){
-                    pb=true;
-                }else{
-                    pb=prepareResource(context,configPath);
+                if (new File(configPath).exists()) {
+                    pb = true;
+                } else {
+                    pb = prepareResource(context, configPath);
                 }
-                Log.e("prepare resource success:"+pb);
-                if(pb){
-                    mObservable.notifyState(new Event(Event.RESOURCE_READY,Event.RESOURCE_READY,"资源准备完成",null));
-                    isResourceReady=true;
+                Log.e("prepare resource success:" + pb);
+                if (pb) {
+                    mObservable.notifyState(new Event(Event.RESOURCE_READY, Event.RESOURCE_READY, "资源准备完成", null));
+                    isResourceReady = true;
                     Log.e("sticker jni init");
-                    int state=mAiyaCameraJni.init(context,configPath,
-                        configPath,context.getPackageName(),DEVICE_ID,appKey);
-                    Log.e("state="+state);
-                    if(state==0){
-                        mObservable.notifyState(new Event(Event.INIT_SUCCESS,Event.INIT_SUCCESS,"初始化成功",null));
-                    }else{
-                        mObservable.notifyState(new Event(Event.INIT_FAILED,state,"初始化失败",null));
+                    int state = mAiyaCameraJni.init(context, configPath,
+                            configPath, context.getPackageName(), DEVICE_ID, appKey);
+                    Log.e("state=" + state);
+                    if (state == 0) {
+                        mObservable.notifyState(new Event(Event.INIT_SUCCESS, Event.INIT_SUCCESS, "初始化成功", null));
+                    } else {
+                        mObservable.notifyState(new Event(Event.INIT_FAILED, state, "初始化失败", null));
                     }
-                }else{
-                    mObservable.notifyState(new Event(Event.RESOURCE_FAILED,Event.INIT_FAILED,"资源准备失败",null));
-                    isResourceReady=false;
+                } else {
+                    mObservable.notifyState(new Event(Event.RESOURCE_FAILED, Event.INIT_FAILED, "资源准备失败", null));
+                    isResourceReady = false;
                 }
             }
         });
@@ -164,101 +165,101 @@ public class AiyaEffects implements ISdkManager {
 
     @SuppressLint("HardwareIds")
     @Override
-    public void init(final Context context,final String appKey){
-        File cacheFilePath=context.getExternalFilesDir(null);
-        if(cacheFilePath==null){
-            cacheFilePath=context.getFilesDir();
+    public void init(final Context context, final String appKey) {
+        File cacheFilePath = context.getExternalFilesDir(null);
+        if (cacheFilePath == null) {
+            cacheFilePath = context.getFilesDir();
         }
-        init(context,cacheFilePath.getAbsolutePath()+"/config",appKey);
+        init(context, cacheFilePath.getAbsolutePath() + "/config", appKey);
     }
 
     @Deprecated
     @Override
     public void setParameters(Parameter inputConfig, Parameter outputConfig) {
         refreshParams();
-        if(inputConfig!=null){
-            this.input=inputConfig;
+        if (inputConfig != null) {
+            this.input = inputConfig;
         }
-        if(outputConfig!=null){
-            this.output=outputConfig;
+        if (outputConfig != null) {
+            this.output = outputConfig;
         }
         Log.e("CameraJni.setParameters");
-        mAiyaCameraJni.setParameters(input.width,input.height,input.format,input
-                .rotation.asInt(),input.flip?1:0,output.width,output.height,output.format,
-            output.rotation.asInt(),output.flip?1:0);
-        set(SET_ASSETS_MANAGER,assetManager);
-        currentEffect=null;
+        mAiyaCameraJni.setParameters(input.width, input.height, input.format, input
+                        .rotation.asInt(), input.flip ? 1 : 0, output.width, output.height, output.format,
+                output.rotation.asInt(), output.flip ? 1 : 0);
+        set(SET_ASSETS_MANAGER, assetManager);
+        currentEffect = null;
         setEffect(nextEffect);
-        isSetParam=true;
+        isSetParam = true;
     }
 
     @Override
     public void setEffect(String effectPath) {
-        if(effectPath==null){
-            currentEffect=null;
-            set(SET_EFFECT_ON,0);
-        }else{
-            set(SET_EFFECT_ON,1);
+        if (effectPath == null) {
+            currentEffect = null;
+            set(SET_EFFECT_ON, 0);
+        } else {
+            set(SET_EFFECT_ON, 1);
         }
-        this.nextEffect=effectPath;
+        this.nextEffect = effectPath;
     }
 
-    public boolean isEffectNull(){
-        return currentEffect==null&&nextEffect==null;
+    public boolean isEffectNull() {
+        return currentEffect == null && nextEffect == null;
     }
 
-    private void refreshParams(){
-        if(input==null){
-            input=new Parameter();
+    private void refreshParams() {
+        if (input == null) {
+            input = new Parameter();
         }
-        input.width=mInWidth;
-        input.height=mInHeight;
-        input.rotation= Rotation.NORMAL;
-        input.format=Parameter.FORMAT_RGBA;
-        if(output==null){
-            output=new Parameter();
+        input.width = mInWidth;
+        input.height = mInHeight;
+        input.rotation = Rotation.NORMAL;
+        input.format = Parameter.FORMAT_RGBA;
+        if (output == null) {
+            output = new Parameter();
         }
-        output.width=mOutWidth;
-        output.height=mOutHeight;
-        output.rotation=Rotation.NORMAL;
-        output.format=Parameter.FORMAT_RGBA;
+        output.width = mOutWidth;
+        output.height = mOutHeight;
+        output.rotation = Rotation.NORMAL;
+        output.format = Parameter.FORMAT_RGBA;
     }
 
     @Override
     public void set(String key, int value) {
-        switch (key){
+        switch (key) {
             case SET_IN_WIDTH:
-                mInWidth=value;
-                isSetParam=false;
+                mInWidth = value;
+                isSetParam = false;
                 break;
             case SET_IN_HEIGHT:
-                mInHeight=value;
-                isSetParam=false;
+                mInHeight = value;
+                isSetParam = false;
                 break;
             case SET_OUT_WIDTH:
-                mOutWidth=value;
-                isSetParam=false;
+                mOutWidth = value;
+                isSetParam = false;
                 break;
             case SET_OUT_HEIGHT:
-                mOutHeight=value;
-                isSetParam=false;
+                mOutHeight = value;
+                isSetParam = false;
                 break;
             case SET_TRACK_WIDTH:
-                mTrackWidth=value;
+                mTrackWidth = value;
                 break;
             case SET_TRACK_HEIGHT:
-                mTrackHeight=value;
+                mTrackHeight = value;
                 break;
             case SET_MODE:
-                this.mMode=value;
+                this.mMode = value;
                 break;
             case SET_TRACK_FORCE_CLOSE:
-                this.forceCloseTrack=value;
+                this.forceCloseTrack = value;
                 break;
             case SET_ACTION:
-                switch (value){
+                switch (value) {
                     case ACTION_REFRESH_PARAMS_NOW:
-                        setParameters(input,output);
+                        setParameters(input, output);
                         break;
                 }
                 break;
@@ -270,31 +271,31 @@ public class AiyaEffects implements ISdkManager {
 
     @Override
     public void set(String key, Object obj) {
-        if(key.equals(SET_ASSETS_MANAGER)){
-            mAiyaCameraJni.set(key,obj);
+        if (key.equals(SET_ASSETS_MANAGER)) {
+            mAiyaCameraJni.set(key, obj);
         }
     }
 
-    public boolean isNeedTrack(){
-        return currentEffect!=null&&forceCloseTrack==FALSE;
+    public boolean isNeedTrack() {
+        return currentEffect != null && forceCloseTrack == FALSE;
     }
 
     @Override
     public void track(final byte[] trackData, final float[] info, final int trackIndex) {
-        if(isResourceReady){
+        if (isResourceReady) {
             mTrackExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if(currentEffect==null||forceCloseTrack==TRUE){
+                    if (currentEffect == null || forceCloseTrack == TRUE) {
                         mSemaphore.release();
                         return;
                     }
-                    long start=System.currentTimeMillis();
-                    int trackCode=mAiyaCameraJni.track(trackData,mTrackWidth,mTrackHeight,info,
-                        trackIndex);
-                    Log.e("track------------------------>"+(System.currentTimeMillis()-start));
-                    if(mTrackCallback!=null){
-                        mTrackCallback.onTrack(trackCode,info);
+                    long start = System.currentTimeMillis();
+                    int trackCode = mAiyaCameraJni.track(trackData, mTrackWidth, mTrackHeight, info,
+                            trackIndex);
+                    Log.e("track------------------------>" + (System.currentTimeMillis() - start));
+                    if (mTrackCallback != null) {
+                        mTrackCallback.onTrack(trackCode, info);
                     }
                     mSemaphore.release();
                 }
@@ -310,33 +311,33 @@ public class AiyaEffects implements ISdkManager {
 
     @Override
     public void process(int textureId, int trackIndex) {
-        if(isResourceReady){
-            if(!isSetParam){
-                setParameters(input,output);
+        if (isResourceReady) {
+            if (!isSetParam) {
+                setParameters(input, output);
             }
-            if(nextEffect!=null&&!nextEffect.equals(currentEffect)){
-                int setRet=mAiyaCameraJni.setEffect(nextEffect);
-                if(setRet<0){
+            if (nextEffect != null && !nextEffect.equals(currentEffect)) {
+                int setRet = mAiyaCameraJni.setEffect(nextEffect);
+                if (setRet < 0) {
                     setEffect(null);
-                    mInfoEvent.intTag=setRet;
-                    mInfoEvent.strTag="setEffect error";
+                    mInfoEvent.intTag = setRet;
+                    mInfoEvent.strTag = "setEffect error";
                     mObservable.notifyState(mInfoEvent);
                 }
-                currentEffect=nextEffect;
+                currentEffect = nextEffect;
             }
-            int ret= mAiyaCameraJni.processFrame(textureId,input.width,input.height,trackIndex);
-            if(mProcessCallback!=null){
+            int ret = mAiyaCameraJni.processFrame(textureId, input.width, input.height, trackIndex);
+            if (mProcessCallback != null) {
                 mProcessCallback.onFinished();
             }
-            if(ret==STATE_EFFECT_END){
-                if(mMode==MODE_GIFT){
+            if (ret == STATE_EFFECT_END) {
+                if (mMode == MODE_GIFT) {
                     setEffect(null);
                 }
-                mProcessEvent.strTag=currentEffect;
+                mProcessEvent.strTag = currentEffect;
                 mObservable.notifyState(mProcessEvent);
-            }else if(ret<0){
-                mInfoEvent.intTag=ret;
-                mInfoEvent.strTag="process error";
+            } else if (ret < 0) {
+                mInfoEvent.intTag = ret;
+                mInfoEvent.strTag = "process error";
                 mObservable.notifyState(mInfoEvent);
             }
         }
@@ -345,12 +346,12 @@ public class AiyaEffects implements ISdkManager {
 
     @Override
     public void setProcessCallback(ProcessCallback callback) {
-        this.mProcessCallback=callback;
+        this.mProcessCallback = callback;
     }
 
     @Override
     public void setTrackCallback(TrackCallback callback) {
-        this.mTrackCallback=callback;
+        this.mTrackCallback = callback;
     }
 
     @Override
@@ -360,7 +361,7 @@ public class AiyaEffects implements ISdkManager {
 
     @Override
     public int get(String key) {
-        switch (key){
+        switch (key) {
             case SET_IN_WIDTH:
                 return mInWidth;
             case SET_IN_HEIGHT:
@@ -376,14 +377,14 @@ public class AiyaEffects implements ISdkManager {
             case SET_MODE:
                 return mMode;
             default:
-               return -1;
+                return -1;
         }
     }
 
     @Override
     public void release() {
         mObservable.unRegisterAll();
-        if(mAiyaCameraJni!=null){
+        if (mAiyaCameraJni != null) {
             mAiyaCameraJni.release();
         }
     }

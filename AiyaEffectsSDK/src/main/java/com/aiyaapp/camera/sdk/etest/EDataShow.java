@@ -28,20 +28,20 @@ import com.aiyaapp.camera.sdk.util.DisplayUtil;
 /**
  * Description:
  */
-public class EDataShow extends SurfaceView implements Runnable,SurfaceHolder.Callback {
+public class EDataShow extends SurfaceView implements Runnable, SurfaceHolder.Callback {
 
     private SurfaceHolder mHolder;
     private Canvas mCanvas;
     private Paint mPaint;
     private Thread mThread;
-    private boolean flag=false;
+    private boolean flag = false;
 
-    private final int dtime=500;
+    private final int dtime = 500;
     private Debug.MemoryInfo mInfo;
-    private final String OUT_LOG="memoryUseage:%04d cpuUsage:%.3f fps:%02f";
+    private final String OUT_LOG = "memoryUseage:%04d cpuUsage:%.3f fps:%02f";
 
     public EDataShow(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public EDataShow(Context context, AttributeSet attrs) {
@@ -49,23 +49,23 @@ public class EDataShow extends SurfaceView implements Runnable,SurfaceHolder.Cal
         init();
     }
 
-    private void init(){
-        mHolder=getHolder();
+    private void init() {
+        mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setFormat(PixelFormat.TRANSLUCENT);
         setZOrderOnTop(true);
-        mPaint=new Paint();
-        mPaint.setTextSize(DisplayUtil.sp2px(getContext(),12));
+        mPaint = new Paint();
+        mPaint.setTextSize(DisplayUtil.sp2px(getContext(), 12));
         mPaint.setColor(0xFFFF8800);
         mPaint.setStrokeWidth(2);
         mPaint.setAntiAlias(true);
-        mInfo=getRunningInfo(getContext());
+        mInfo = getRunningInfo(getContext());
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        flag=true;
-        mThread=new Thread(this);
+        flag = true;
+        mThread = new Thread(this);
         mThread.start();
     }
 
@@ -76,18 +76,18 @@ public class EDataShow extends SurfaceView implements Runnable,SurfaceHolder.Cal
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        flag=false;
+        flag = false;
     }
 
     @Override
     public void run() {
-        while (flag){
-            long startTime=System.currentTimeMillis();
+        while (flag) {
+            long startTime = System.currentTimeMillis();
             myDraw();
-            long deltaTime=System.currentTimeMillis()-startTime;
-            if(deltaTime<dtime){
+            long deltaTime = System.currentTimeMillis() - startTime;
+            if (deltaTime < dtime) {
                 try {
-                    cpuRate=AppOsUtils.getProcessCpuRate(dtime-deltaTime);
+                    cpuRate = AppOsUtils.getProcessCpuRate(dtime - deltaTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -96,28 +96,28 @@ public class EDataShow extends SurfaceView implements Runnable,SurfaceHolder.Cal
         }
     }
 
-    private void myDraw(){
-        mInfo=getRunningInfo(getContext());
-        memSize=mInfo!=null?mInfo.getTotalPss()/1024:-1;
+    private void myDraw() {
+        mInfo = getRunningInfo(getContext());
+        memSize = mInfo != null ? mInfo.getTotalPss() / 1024 : -1;
         try {
-            mCanvas=mHolder.lockCanvas();
+            mCanvas = mHolder.lockCanvas();
             mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            mCanvas.drawText(String.format(Locale.CHINA,"Fps=%.1f，Dtm=%03d，Cma=%.1f",EData.data
-                .getFps(),
-                EData.data.getDealTime(),EData.data.getCameraFps()),40,40, mPaint);
+            mCanvas.drawText(String.format(Locale.CHINA, "Fps=%.1f，Dtm=%03d，Cma=%.1f", EData.data
+                            .getFps(),
+                    EData.data.getDealTime(), EData.data.getCameraFps()), 40, 40, mPaint);
             try {
-                mCanvas.drawText(String.format(Locale.CHINA,"Mem=%04dM，Cpu=%.3f%%,track:%b",memSize,
-                    cpuRate,EData.data.getTrackCode()==1),
-                    40,70,mPaint);
-            }catch (Exception e){
+                mCanvas.drawText(String.format(Locale.CHINA, "Mem=%04dM，Cpu=%.3f%%,track:%b", memSize,
+                        cpuRate, EData.data.getTrackCode() == 1),
+                        40, 70, mPaint);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.e("log_analyse",String.format(Locale.CHINA,OUT_LOG,memSize,cpuRate,EData.data
-                .getFps()));
-        }catch (Exception e){
+            Log.e("log_analyse", String.format(Locale.CHINA, OUT_LOG, memSize, cpuRate, EData.data
+                    .getFps()));
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(mCanvas!=null){
+        } finally {
+            if (mCanvas != null) {
                 mHolder.unlockCanvasAndPost(mCanvas);
             }
         }
@@ -126,15 +126,16 @@ public class EDataShow extends SurfaceView implements Runnable,SurfaceHolder.Cal
     private int memSize;
     private float cpuRate;
     private ActivityManager mActivityManager;
+
     private Debug.MemoryInfo getRunningInfo(Context context) {
-        if(mActivityManager==null){
-            mActivityManager = (ActivityManager)context.getSystemService(Context
-                .ACTIVITY_SERVICE);
+        if (mActivityManager == null) {
+            mActivityManager = (ActivityManager) context.getSystemService(Context
+                    .ACTIVITY_SERVICE);
             //获得系统里正在运行的所有进程
         }
         int mpid = Process.myPid();
-        Debug.MemoryInfo[] info=mActivityManager.getProcessMemoryInfo(new int[]{mpid});
-        if(info!=null&&info.length>0){
+        Debug.MemoryInfo[] info = mActivityManager.getProcessMemoryInfo(new int[]{mpid});
+        if (info != null && info.length > 0) {
             return info[0];
         }
         return null;

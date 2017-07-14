@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.doggycoder'
+group = 'com.github.doggycoder'
 
 android {
 
@@ -44,8 +44,8 @@ android {
     }
     task makeJar(type: Jar) {
         from zipTree(zipFile)
-        from fileTree(dir: 'src/main', includes: ['assets/**','res/**'])
-        baseName = sdkDestinationPath+SDK_BASENAME + rootProject.ext.vName
+        from fileTree(dir: 'src/main', includes: ['assets/**', 'res/**'])
+        baseName = sdkDestinationPath + SDK_BASENAME + rootProject.ext.vName
         destinationDir = file(".")
     }
     makeJar.dependsOn(deleteBuild, build)

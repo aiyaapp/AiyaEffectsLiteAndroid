@@ -29,7 +29,7 @@ public class UriUtil {
      * other file-based ContentProviders.
      *
      * @param context The context.
-     * @param uri The Uri to query.
+     * @param uri     The Uri to query.
      */
     public static String getPath(final Context context, final Uri uri) {
 
@@ -54,7 +54,7 @@ public class UriUtil {
 
                 final String id = DocumentsContract.getDocumentId(uri);
                 final Uri contentUri = ContentUris.withAppendedId(
-                    Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
 
                 return getDataColumn(context, contentUri, null, null);
             }
@@ -74,8 +74,8 @@ public class UriUtil {
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
-                    split[1]
+                final String[] selectionArgs = new String[]{
+                        split[1]
                 };
 
                 return getDataColumn(context, contentUri, selection, selectionArgs);
@@ -97,9 +97,9 @@ public class UriUtil {
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
@@ -109,12 +109,12 @@ public class UriUtil {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
-            column
+                column
         };
 
         try {
             cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                null);
+                    null);
             if (cursor != null && cursor.moveToFirst()) {
                 final int column_index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(column_index);

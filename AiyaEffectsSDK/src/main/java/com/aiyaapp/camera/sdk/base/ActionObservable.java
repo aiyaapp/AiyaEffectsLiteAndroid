@@ -20,39 +20,39 @@ public class ActionObservable {
 
     private Handler mHandler;
 
-    public ActionObservable(){
-        mObservers=new ArrayList<>();
+    public ActionObservable() {
+        mObservers = new ArrayList<>();
         initHandler();
     }
 
-    private void initHandler(){
-        mHandler=new Handler(Looper.getMainLooper()){
+    private void initHandler() {
+        mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                for (int i=0;i<mObservers.size();i++) {
-                    mObservers.get(i).onAction((Event)msg.obj);
+                for (int i = 0; i < mObservers.size(); i++) {
+                    mObservers.get(i).onAction((Event) msg.obj);
                 }
             }
         };
     }
 
-    public void notifyState(Event state){
-        Message msg=mHandler.obtainMessage();
-        msg.obj=state;
+    public void notifyState(Event state) {
+        Message msg = mHandler.obtainMessage();
+        msg.obj = state;
         mHandler.sendMessage(msg);
     }
 
-    public void registerObserver(ActionObserver observer){
-        if(!mObservers.contains(observer)){
+    public void registerObserver(ActionObserver observer) {
+        if (!mObservers.contains(observer)) {
             mObservers.add(observer);
         }
     }
 
-    public void unRegisterObserver(ActionObserver observer){
+    public void unRegisterObserver(ActionObserver observer) {
         mObservers.remove(observer);
     }
 
-    public void unRegisterAll(){
+    public void unRegisterAll() {
         mObservers.clear();
     }
 

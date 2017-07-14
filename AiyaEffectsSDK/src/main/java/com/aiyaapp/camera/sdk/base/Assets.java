@@ -32,13 +32,13 @@ public class Assets {
 
 
     public Assets(Context context, String rootDir) {
-        this.mContext=context;
+        this.mContext = context;
         this.mManager = context.getAssets();
         this.rootDir = rootDir;
     }
 
     public Assets(Context context) {
-        this(context,context.getFilesDir().getAbsolutePath());
+        this(context, context.getFilesDir().getAbsolutePath());
     }
 
     //Todo 后面model_sticker的文件不应该放到assets文件夹下，利用外部加载的方式
@@ -67,27 +67,27 @@ public class Assets {
         return true;
     }
 
-    private boolean copyForSticker(){
+    private boolean copyForSticker() {
         Log.d("check data for sticker");
-        return copyFileFromAssets("modelsticker",getSD()+"/AiyaCamera/model_sticker");
+        return copyFileFromAssets("modelsticker", getSD() + "/AiyaCamera/model_sticker");
     }
 
-    private void deleteFile(String path){
-        File file=new File(path);
-        if(file.exists()){
-            if(file.isFile()){
-                boolean b=file.delete();
-                if(!b){
-                    Log.d("delete file error:"+path);
+    private void deleteFile(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            if (file.isFile()) {
+                boolean b = file.delete();
+                if (!b) {
+                    Log.d("delete file error:" + path);
                 }
-            }else{
-                String[] fileList=file.list();
-                for (String fp:fileList){
-                    deleteFile(path+File.separator+fp);
+            } else {
+                String[] fileList = file.list();
+                for (String fp : fileList) {
+                    deleteFile(path + File.separator + fp);
                 }
-                boolean b=file.delete();
-                if(!b){
-                    Log.d("delete file error:"+path);
+                boolean b = file.delete();
+                if (!b) {
+                    Log.d("delete file error:" + path);
                 }
             }
         }
@@ -99,9 +99,9 @@ public class Assets {
             String[] files = mManager.list(src);
             if (files.length > 0) {     //如果是文件夹
                 File folder = new File(dst);
-                if(!folder.exists()){
+                if (!folder.exists()) {
                     boolean b = folder.mkdirs();
-                    Log.d("create folder : "+dst);
+                    Log.d("create folder : " + dst);
                     if (!b) {
                         Log.e("create folder failed:" + dst);
                         return false;
@@ -109,12 +109,12 @@ public class Assets {
                 }
                 for (String fileName : files) {
                     if (!copyFileFromAssets(src + File.separator + fileName, dst +
-                        File.separator + fileName)) {
+                            File.separator + fileName)) {
                         return false;
                     }
                 }
             } else {  //如果是文件
-                if(!copyAssetsFile(src, dst)){
+                if (!copyAssetsFile(src, dst)) {
                     return false;
                 }
             }
@@ -132,7 +132,7 @@ public class Assets {
         try {
             File file = new File(dst);
             if (!file.exists()) {
-                Log.d("copy File : "+dst);
+                Log.d("copy File : " + dst);
                 in = mManager.open(src);
                 out = new FileOutputStream(dst);
                 byte[] buffer = new byte[4 * 1024];
@@ -143,8 +143,8 @@ public class Assets {
                 out.flush();
                 out.close();
                 in.close();
-            }else{
-                Log.d("file exits : " +dst);
+            } else {
+                Log.d("file exits : " + dst);
             }
         } catch (Exception e) {
             Log.e(e.getMessage());
@@ -155,6 +155,7 @@ public class Assets {
 
     /**
      * 复制单个文件
+     *
      * @param oldPath String 原文件路径 如：c:/fqf.txt
      * @param newPath String 复制后路径 如：f:/fqf.txt
      * @return boolean
@@ -169,15 +170,14 @@ public class Assets {
                 FileOutputStream fs = new FileOutputStream(newPath);
                 byte[] buffer = new byte[1444];
                 int length;
-                while ( (byteread = inStream.read(buffer)) != -1) {
+                while ((byteread = inStream.read(buffer)) != -1) {
                     bytesum += byteread; //字节数 文件大小
                     System.out.println(bytesum);
                     fs.write(buffer, 0, byteread);
                 }
                 inStream.close();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("复制单个文件操作出错");
             e.printStackTrace();
 
@@ -187,6 +187,7 @@ public class Assets {
 
     /**
      * 复制整个文件夹内容
+     *
      * @param oldPath String 原文件路径 如：c:/fqf
      * @param newPath String 复制后路径 如：f:/fqf/ff
      * @return boolean
@@ -195,43 +196,41 @@ public class Assets {
 
         try {
             (new File(newPath)).mkdirs(); //如果文件夹不存在 则建立新文件夹
-            File a=new File(oldPath);
-            String[] file=a.list();
-            File temp=null;
+            File a = new File(oldPath);
+            String[] file = a.list();
+            File temp = null;
             for (int i = 0; i < file.length; i++) {
-                if(oldPath.endsWith(File.separator)){
-                    temp=new File(oldPath+file[i]);
-                }
-                else{
-                    temp=new File(oldPath+File.separator+file[i]);
+                if (oldPath.endsWith(File.separator)) {
+                    temp = new File(oldPath + file[i]);
+                } else {
+                    temp = new File(oldPath + File.separator + file[i]);
                 }
 
-                if(temp.isFile()){
+                if (temp.isFile()) {
                     FileInputStream input = new FileInputStream(temp);
-                    FileOutputStream output = new FileOutputStream(newPath + "/" +temp.getName());
+                    FileOutputStream output = new FileOutputStream(newPath + "/" + temp.getName());
                     byte[] b = new byte[1024 * 5];
                     int len;
-                    while ( (len = input.read(b)) != -1) {
+                    while ((len = input.read(b)) != -1) {
                         output.write(b, 0, len);
                     }
-                    Log.d("copy to sd:"+newPath);
+                    Log.d("copy to sd:" + newPath);
                     output.flush();
                     output.close();
                     input.close();
                 }
-                if(temp.isDirectory()){//如果是子文件夹
-                    copyFolder(oldPath+"/"+file[i],newPath+"/"+file[i]);
+                if (temp.isDirectory()) {//如果是子文件夹
+                    copyFolder(oldPath + "/" + file[i], newPath + "/" + file[i]);
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("复制整个文件夹内容操作出错");
             e.printStackTrace();
         }
 
     }
 
-    private String getSD(){
+    private String getSD() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 }

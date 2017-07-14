@@ -12,36 +12,37 @@ package com.aiyaapp.camera.sdk.base;
  */
 public class Log {
 
-    private static final String tag="AiyaCameraEffect";
-    private static boolean isDebug=true;
+    private static final String tag = "AiyaCameraEffect";
+    private static boolean isDebug = true;
 
-    private Log(){}
-
-    public static void debug(boolean isDebug){
-        Log.isDebug=isDebug;
+    private Log() {
     }
 
-    public static void e(String info){
-        if(isDebug){
-            android.util.Log.e(tag,info);
+    public static void debug(boolean isDebug) {
+        Log.isDebug = isDebug;
+    }
+
+    public static void e(String info) {
+        if (isDebug) {
+            android.util.Log.e(tag, info);
         }
     }
 
-    public static void e(String tag,String info){
-        if (isDebug){
-            android.util.Log.e(tag,info);
+    public static void e(String tag, String info) {
+        if (isDebug) {
+            android.util.Log.e(tag, info);
         }
     }
 
-    public static void d(String info){
-        if(isDebug){
-            android.util.Log.d(tag,info);
+    public static void d(String info) {
+        if (isDebug) {
+            android.util.Log.d(tag, info);
         }
     }
 
-    public static void d(String tag,String info){
-        if(isDebug){
-            android.util.Log.d(tag,info);
+    public static void d(String tag, String info) {
+        if (isDebug) {
+            android.util.Log.d(tag, info);
         }
     }
 
