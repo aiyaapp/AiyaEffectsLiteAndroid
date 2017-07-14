@@ -317,6 +317,7 @@ public class AiyaEffects implements ISdkManager {
             if(nextEffect!=null&&!nextEffect.equals(currentEffect)){
                 int setRet=mAiyaCameraJni.setEffect(nextEffect);
                 if(setRet<0){
+                    setEffect(null);
                     mInfoEvent.intTag=setRet;
                     mInfoEvent.strTag="setEffect error";
                     mObservable.notifyState(mInfoEvent);
