@@ -41,7 +41,6 @@ public class LoadActivity extends AppCompatActivity {
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-
             final ActionObserver observer = new ActionObserver() {
                 @Override
                 public void onAction(Event event) {

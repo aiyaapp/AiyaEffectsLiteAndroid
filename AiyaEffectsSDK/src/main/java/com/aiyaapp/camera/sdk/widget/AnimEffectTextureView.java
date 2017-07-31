@@ -57,12 +57,10 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         animate().scaleY(-1).withLayer();
         setSurfaceTextureListener(this);
 
-        AiyaEffects.getInstance().registerObserver(this);
-
         mEnv = new GLEnvironment(getContext());
         mEnv.setEGLContextClientVersion(2);
         mEnv.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        mEnv.setPreserveEGLContextOnPause(true);
+        mEnv.setPreserveEGLContextOnPause(false);
         mEnv.setEGLWindowSurfaceFactory(new GLEnvironment.EGLWindowSurfaceFactory() {
             @Override
             public EGLSurface createSurface(EGL10 egl, EGLDisplay display, EGLConfig config, Object nativeWindow) {
@@ -105,12 +103,6 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         this.mFrameListener = listener;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        AiyaEffects.getInstance().unRegisterObserver(this);
-    }
-
     public void setMode(int mode) {
         AiyaEffects.getInstance().set(ISdkManager.SET_MODE, mode);
     }
@@ -124,6 +116,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         this.mTexture = surface;
         Log.d("AnimE", "onSurfaceTextureAvailable");
+        mEnv.onAttachedToWindow();
         mEnv.surfaceCreated(null);
         mEnv.surfaceChanged(null, 0, width, height);
         //if (isAnimEffectPlaying()){
@@ -142,6 +135,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
         Log.d("AnimE", "onSurfaceTextureDestroyed");
         this.mTexture = null;
         mEnv.surfaceDestroyed(null);
+        mEnv.onDetachedFromWindow();
         return false;
     }
 
@@ -194,13 +188,17 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     }
 
     public void onResume() {
-        //mEnv.onResume();
-        Log.d("AnimE", "onResume");
+        if(mEnv!=null){
+            mEnv.onAttachedToWindow();
+        }
+        AiyaEffects.getInstance().registerObserver(this);
     }
 
     public void onPause() {
-        //mEnv.onPause();
-        Log.d("AnimE", "onPause");
+        if(mEnv!=null){
+            mEnv.onDetachedFromWindow();
+        }
+        AiyaEffects.getInstance().unRegisterObserver(this);
     }
 
     @Override
@@ -217,6 +215,9 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
                 }
                 break;
             case Event.PROCESS_ERROR:
+                if (mFrameListener != null) {
+                    mFrameListener.onAnimError();
+                }
                 if (mErrorListener != null) {
                     mErrorListener.onError(event.intTag, event.strTag);
                 }
@@ -230,6 +231,8 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
 
     public interface AnimListener extends AnimEndListener {
         void onAnimStart(String effect);
+
+        void onAnimError();
 
         void onFrame();
     }

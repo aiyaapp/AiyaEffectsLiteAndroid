@@ -49,6 +49,11 @@ public class FrameRateCounter implements AnimEffectTextureView.AnimListener {
     }
 
     @Override
+    public void onAnimError() {
+
+    }
+
+    @Override
     public void onFrame() {
         if (isStart) {
             count++;

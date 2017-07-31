@@ -66,7 +66,6 @@ final class AiyaCameraJni {
     private native void nControl(String key, Object obj);
 
     static {
-        System.loadLibrary("fdk-aac");
         System.loadLibrary("ijkffmpeg");
         System.loadLibrary("ayeffects");
         System.loadLibrary("AiyaJniWrapper");
