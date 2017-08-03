@@ -39,7 +39,7 @@ public class EffectOnlyActivity extends EffectSelectActivity {
             mEffectView.setOnErrorListener(new GLEnvironment.ErrorListener() {
                 @Override
                 public void onError(int errorCode, String errorMsg) {
-                    Log.e("wuwang", "mEffectViewError:" + errorMsg);
+                    Log.e("wuwang", "mEffectViewError:"+errorCode+"/" + errorMsg);
                 }
             });
             mEffectView.setAnimListener(new FrameRateCounter());
