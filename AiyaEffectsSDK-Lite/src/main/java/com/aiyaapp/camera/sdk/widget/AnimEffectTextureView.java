@@ -134,6 +134,8 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
         Log.d("AnimE", "onSurfaceTextureDestroyed");
         this.mTexture = null;
+        this.width=0;
+        this.height=0;
         mEnv.surfaceDestroyed(null);
         mEnv.onDetachedFromWindow();
         return false;
@@ -189,6 +191,9 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
 
     public void onResume() {
         if(mEnv!=null){
+            if(mTexture!=null){
+                onSurfaceTextureAvailable(mTexture,width,height);
+            }
             mEnv.onAttachedToWindow();
         }
         AiyaEffects.getInstance().registerObserver(this);
@@ -196,6 +201,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
 
     public void onPause() {
         if(mEnv!=null){
+            mEnv.surfaceDestroyed(null);
             mEnv.onDetachedFromWindow();
         }
         AiyaEffects.getInstance().unRegisterObserver(this);
