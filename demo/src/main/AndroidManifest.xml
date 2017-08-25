@@ -29,6 +29,7 @@
         <activity
             android:name=".mvc.EffectOnlyActivity"
             android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:screenOrientation="portrait"></activity>
         <activity android:name="com.aiyaapp.aiya.LoadActivity">
             <intent-filter>

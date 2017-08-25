@@ -127,7 +127,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     @Override
     public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         Log.d("AnimE", "onSurfaceTextureSizeChanged");
-        mEnv.surfaceChanged(null, 0, width, height);
+//        mEnv.surfaceChanged(null, 0, width, height);
     }
 
     @Override
@@ -174,6 +174,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
             AiyaEffects.getInstance().set(ISdkManager.SET_TRACK_WIDTH, width);
             AiyaEffects.getInstance().set(ISdkManager.SET_TRACK_HEIGHT, height);
         }
+
         AiyaEffects.getInstance().set(ISdkManager.SET_ACTION, ISdkManager.ACTION_REFRESH_PARAMS_NOW);
     }
 
@@ -190,6 +191,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     }
 
     public void onResume() {
+        Log.d("AnimE","onResume");
         if(mEnv!=null){
             if(mTexture!=null){
                 onSurfaceTextureAvailable(mTexture,width,height);
@@ -200,6 +202,7 @@ public class AnimEffectTextureView extends TextureView implements TextureView.Su
     }
 
     public void onPause() {
+        Log.d("AnimE","onResume");
         if(mEnv!=null){
             mEnv.surfaceDestroyed(null);
             mEnv.onDetachedFromWindow();
