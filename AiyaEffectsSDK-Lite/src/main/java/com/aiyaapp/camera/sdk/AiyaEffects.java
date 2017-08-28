@@ -320,7 +320,7 @@ public class AiyaEffects implements ISdkManager {
                 if (setRet < 0) {
                     setEffect(null);
                     mInfoEvent.intTag = setRet;
-                    mInfoEvent.strTag = "setEffect error";
+                    mInfoEvent.strTag = "setEffect error:"+nextEffect;
                     mObservable.notifyState(mInfoEvent);
                 }
                 currentEffect = nextEffect;
